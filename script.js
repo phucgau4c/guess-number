@@ -1,38 +1,66 @@
 'use strict';
 
-const scoreDefault = 20;
-let highScore = 0;
+let scoreDefault = 20;
 
-const randomNumber = Math.floor(Math.random() * 20);
+const highScore = 0;
+
+const random = () => {
+  return Math.floor(Math.random() * 20);
+};
+
+let randomNumber = random();
 
 const guestInput = document.querySelector('.guess');
 
-const score = (document.querySelector('.score').textContent = scoreDefault);
+const score = document.querySelector('.score');
+score.textContent = scoreDefault;
 
 const number = document.querySelector('.number');
 
 const background = document.body.style;
 
-let message = document.querySelector('.message');
+const message = document.querySelector('.message');
 
-document.querySelector('.highscore').textContent = highScore;
+const handleScore = () => {
+  scoreDefault--;
+  score.textContent = scoreDefault;
+  if (scoreDefault === 0) {
+    message.textContent = '💥 Game over';
+  } else if (scoreDefault < 0) {
+    reset();
+  }
+};
 
 console.log('random: ' + randomNumber);
 
-document.querySelector('.check').addEventListener('click', () => {
+const check = () => {
   if (guestInput.value < randomNumber) {
-    console.log('too low');
     message.textContent = '⬇️ Too Low';
-    console.log('score: ' + score);
+    handleScore();
   } else if (guestInput.value > randomNumber) {
-    console.log('too hight');
     message.textContent = '⬆️ Too High';
-
-    console.log('score: ' + score);
+    handleScore();
   } else {
+    if (highScore < scoreDefault) {
+      document.querySelector('.highscore').textContent = scoreDefault;
+    }
+
     message.textContent = '🎊 Congratulation';
     number.textContent = randomNumber;
     background.backgroundColor = '#04AA6D';
-    console.log('score: ' + score);
   }
-});
+};
+
+const reset = () => {
+  number.textContent = '?';
+  background.backgroundColor = '#222';
+  message.textContent = 'Start guessing...';
+  guestInput.value = '';
+  scoreDefault = 20;
+  score.textContent = scoreDefault;
+  randomNumber = random();
+};
+
+document.querySelector('.check').addEventListener('click', check);
+
+document.querySelector('.again').addEventListener('click', reset);
